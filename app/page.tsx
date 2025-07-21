@@ -42,7 +42,7 @@ export default function Home() {
   const fetchData = async () => {
     setLoading(true);
 
-  
+    // fetch cameras
     const camerasSnap = await getDocs(collection(db, 'cameras'));
     const cameraMap: Record<string, Camera> = {};
     const camerasArr: Camera[] = [];
@@ -51,29 +51,37 @@ export default function Home() {
       const data = docSnap.data();
       const camera: Camera = {
         id: docSnap.id,
-        name: data.name || 'Unknown',      
-        location: data.location || 'Unknown', 
+        name: data.name || 'Unknown',
+        location: data.location || 'Unknown',
       };
       cameraMap[docSnap.id] = camera;
       camerasArr.push(camera);
     });
 
-  
+    // fetch incidents
     const incidentsSnap = await getDocs(
       query(collection(db, 'incidents'), where('resolved', '==', false))
     );
 
     const incidentsArr: Incident[] = incidentsSnap.docs.map((docSnap) => {
       const data = docSnap.data();
+
       const incident: Incident = {
         id: docSnap.id,
-        ...data,
+        type: data.type || 'Unknown',
+        cameraId: data.cameraId || '',
+        tsStart: data.tsStart || '',
+        tsEnd: data.tsEnd || '',
+        thumbnailUrl: data.thumbnailUrl || '/default-thumbnail.jpg',
+        resolved: data.resolved ?? false,
+        videoUrl: data.videoUrl || undefined,
         camera: cameraMap[data.cameraId] ?? {
           id: '',
           name: 'Unknown',
           location: '',
         },
       };
+
       return incident;
     });
 
