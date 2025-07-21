@@ -40,7 +40,7 @@ export default function IncidentList() {
     const cameraMap: Record<string, Camera> = {};
     camerasSnap.forEach((doc) => {
       const data = doc.data() as Camera;
-      cameraMap[doc.id] = { id: doc.id, ...data };
+      cameraMap[doc.id] = { ...data, id: doc.id };
     });
 
     
