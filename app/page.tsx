@@ -42,18 +42,23 @@ export default function Home() {
   const fetchData = async () => {
     setLoading(true);
 
-    
+  
     const camerasSnap = await getDocs(collection(db, 'cameras'));
     const cameraMap: Record<string, Camera> = {};
     const camerasArr: Camera[] = [];
 
     camerasSnap.forEach((docSnap) => {
       const data = docSnap.data();
-      const camera: Camera = { id: docSnap.id, ...data };
+      const camera: Camera = {
+        id: docSnap.id,
+        name: data.name || 'Unknown',      
+        location: data.location || 'Unknown', 
+      };
       cameraMap[docSnap.id] = camera;
       camerasArr.push(camera);
     });
 
+  
     const incidentsSnap = await getDocs(
       query(collection(db, 'incidents'), where('resolved', '==', false))
     );
